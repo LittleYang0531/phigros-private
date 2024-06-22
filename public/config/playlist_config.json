@@ -1,0 +1,34 @@
+{
+    "playlists.enableLike": false,
+    "playlists.enableComment": false,
+    "playlists.enableRating": false,
+    "playlists.enableGUICreate": false,
+    "playlists.enableSonolusCreate": false,
+    "playlists.pageSize.info": 5,
+    "playlists.pageSize.list": 20,
+    "playlists.pageSize.recommends": 5,
+    "playlists.pageSize.community": 5,
+    "playlists.info.sections": [
+        {
+            "title": "#NEWEST",
+            "icon": "playlist",
+            "filter": "",
+            "order": "id DESC"
+        },
+        {
+            "title": "#RANDOM",
+            "icon": "playlist",
+            "filter": "",
+            "order": "RANDOM() ASC"
+        }
+    ],
+    "playlists.details.sections": [
+        
+    ],
+    "playlists.searches": [
+        
+    ],
+    "playlists.creates": [
+
+    ]
+}

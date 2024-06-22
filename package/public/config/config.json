@@ -1,0 +1,33 @@
+{
+    "tables": {
+        "Level": 0,
+        "Skin": 0,
+        "Background": 0,
+        "Effect": 0,
+        "Particle": 0,
+        "Engine": 0,
+        "Replay": 0,
+        "Post": 0,
+        "Playlist": 0,
+        "UserProfile": 0,
+        "UserSession": 0,
+        "Room": 0,
+        "LikeTable": 0,
+        "Comment": 0,
+        "Rating": 0
+    },
+    "server.listenHost": "0.0.0.0",
+    "server.listenPort": 8080,
+    "server.enableSSL": false,
+    "server.httpsCacert": "cert.pem",
+    "server.httpsPrivkey": "privkey.pem",
+    "server.threadNumber": 8,
+    "logSystem.debug": false,
+    "logSystem.target": 1,
+    "logSystem.targetFile": "./log.txt",
+    "sonolus.version": "0.8.2",
+    "sonolus.itemsPerPage": 20,
+    "session.expireTime": 30,
+    "export.retryTime": 5,
+    "export.hashCheckTime": 5
+}
