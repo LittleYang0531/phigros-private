@@ -30,9 +30,15 @@
             "order": "id DESC"
         },
         {
+            "title": "#SAME_ARTISTS",
+            "icon": "crown",
+            "filter": "name LIKE \"%easy%\" AND artists = \"{{artists}}\"",
+            "order": "id DESC"
+        },
+        {
             "title": "#SAME_AUTHOR",
             "icon": "crown",
-            "filter": "name LIKE \"%olivier%\" AND artists = \"{{artists}}\"",
+            "filter": "author = \"{{author}}\"",
             "order": "id DESC"
         }
     ],
@@ -59,7 +65,7 @@
                     "query": "difficulty",
                     "type": "select",
                     "def": 0,
-                    "values": [ "All", "Normal", "Hard", "Extra", "Stella", "Olivier" ]
+                    "values": [ "All", "EZ", "HD", "IN", "AT", "SP" ]
                 },
                 {
                     "query": "minRating",
@@ -67,16 +73,16 @@
                     "type": "slider",
                     "def": 1,
                     "min": 1,
-                    "max": 50,
+                    "max": 16,
                     "step": 1
                 },
                 {
                     "query": "maxRating",
                     "name": "#RATING_MAXIMUM",
                     "type": "slider",
-                    "def": 40,
+                    "def": 16,
                     "min": 1,
-                    "max": 50,
+                    "max": 16,
                     "step": 1
                 },
                 {
@@ -86,7 +92,7 @@
                     "def": 0
                 }
             ],
-            "filter": "title LIKE \"%{{keywords}}%\" AND artists LIKE \"%{{artist}}%\" AND name LIKE (CASE \"{{difficulty}}\" WHEN \"All\" THEN \"%\" ELSE \"%{{difficulty}}%\" END) AND rating >= {{minRating}} AND rating <= {{maxRating}}",
+            "filter": "title LIKE \"%{{keywords}}%\" AND artists LIKE \"%{{artist}}%\" AND tags LIKE (CASE \"{{difficulty}}\" WHEN \"All\" THEN \"%\" ELSE \"%{{difficulty}}%\" END) AND rating >= {{minRating}} AND rating <= {{maxRating}}",
             "order": "CASE {{random}} WHEN 0 THEN id WHEN 1 THEN RANDOM() END DESC"
         }
     ],
