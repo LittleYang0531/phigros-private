@@ -9,7 +9,12 @@
     "posts.pageSize.recommends": 5,
     "posts.pageSize.community": 5,
     "posts.info.sections": [
-        
+        {
+            "title": "#ANNOUNCEMENT",
+            "icon": "post",
+            "filter": "tags LIKE \"%#ANNOUNCEMENT%\"",
+            "order": "time DESC"
+        }
     ],
     "posts.details.sections": [
         
