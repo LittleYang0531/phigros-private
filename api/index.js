@@ -8,6 +8,8 @@ console.log(__dirname + "/../public", getFiles(__dirname + "/../public"));
 console.log(__dirname + "/../public/i18n", getFiles(__dirname + "/../public/i18n"));
 let wasm = fs.readFileSync(__dirname + '/../public/libsonolus.wasm');
 console.log(wasm.length);
+let ko = fs.readFileSync(__dirname + '/../public/i18n/ko.json');
+console.log(ko.length);
 var bodyParser = require('body-parser')
 const factory = require('../public/libsonolus.js');
 const app = express();
