@@ -5,6 +5,7 @@ function getFiles(path) {
 }
 console.log(__dirname, getFiles(__dirname));
 console.log(__dirname + "/../public", getFiles(__dirname + "/../public"));
+console.log(__dirname + "/../public/i18n", getFiles(__dirname + "/../public/i18n"));
 let wasm = fs.readFileSync(__dirname + '/../public/libsonolus.wasm');
 console.log(wasm.length);
 var bodyParser = require('body-parser')
