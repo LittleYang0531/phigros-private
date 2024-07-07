@@ -63,6 +63,12 @@
                     "placeholder": "#ARTISTS_PLACEHOLDER"
                 },
                 {
+                    "query": "author",
+                    "name": "#AUTHOR",
+                    "type": "text",
+                    "placeholder": "#AUTHOR_PLACEHOLDER"
+                },
+                {
                     "name": "#DIFFICULTY",
                     "query": "difficulty",
                     "type": "select",
@@ -94,7 +100,7 @@
                     "def": 0
                 }
             ],
-            "filter": "title LIKE \"%{{keywords}}%\" AND artists LIKE \"%{{artist}}%\" AND tags LIKE (CASE \"{{difficulty}}\" WHEN \"All\" THEN \"%\" ELSE \"%{{difficulty}}%\" END) AND rating >= {{minRating}} AND rating <= {{maxRating}}",
+            "filter": "(name LIKE \"%{{keywords}}%\" OR title LIKE \"%{{keywords}}%\" OR artists LIKE \"{{keywords}}\" OR author LIKE \"{{keywords}}\") AND artists LIKE \"%{{artist}}%\" AND author LIKE \"%{{author}}%\" AND tags LIKE (CASE \"{{difficulty}}\" WHEN \"All\" THEN \"%\" ELSE \"%{{difficulty}}%\" END) AND rating >= {{minRating}} AND rating <= {{maxRating}}",
             "order": "CASE {{random}} WHEN 0 THEN id WHEN 1 THEN RANDOM() END DESC"
         }
     ],
