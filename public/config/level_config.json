@@ -76,6 +76,39 @@
                     "values": [ "All", "EZ", "HD", "IN", "AT", "SP" ]
                 },
                 {
+                    "name": "Chapter",
+                    "query": "chapter",
+                    "type": "select",
+                    "def": 0,
+                    "values": [ 
+                        "All", 
+                        "Single", 
+                        "Legacy", 
+                        "Chapter 5", 
+                        "Chapter 6", 
+                        "Chapter 7", 
+                        "Chapter 8", 
+                        "Side story 1",
+                        "Side story 2",
+                        "Side story 3",
+                        "SHINOBI SLASH",
+                        "Paradigm: Reboot",
+                        "CHUNITHM",
+                        "Rotaeno",
+                        "かめりあ",
+                        "OverRapid",
+                        "茶鸣拾贰律",
+                        "姜米條",
+                        "Lanota",
+                        "KALPA",
+                        "Muse Dash",
+                        "WAVEAT",
+                        "GOOD",
+                        "HyuN",
+                        "Rising Sun Traxx"
+                    ]
+                },
+                {
                     "query": "minRating",
                     "name": "#RATING_MINIMUM",
                     "type": "slider",
@@ -100,7 +133,7 @@
                     "def": 0
                 }
             ],
-            "filter": "(name LIKE \"%{{keywords}}%\" OR title LIKE \"%{{keywords}}%\" OR artists LIKE \"{{keywords}}\" OR author LIKE \"{{keywords}}\") AND artists LIKE \"%{{artist}}%\" AND author LIKE \"%{{author}}%\" AND tags LIKE (CASE \"{{difficulty}}\" WHEN \"All\" THEN \"%\" ELSE \"%{{difficulty}}%\" END) AND rating >= {{minRating}} AND rating <= {{maxRating}}",
+            "filter": "(name LIKE \"%{{keywords}}%\" OR title LIKE \"%{{keywords}}%\" OR artists LIKE \"{{keywords}}\" OR author LIKE \"{{keywords}}\") AND artists LIKE \"%{{artist}}%\" AND author LIKE \"%{{author}}%\" AND tags LIKE (CASE \"{{difficulty}}\" WHEN \"All\" THEN \"%\" ELSE \"%{{difficulty}}%\" END) AND tags LIKE (CASE \"{{chapter}}\" WHEN \"All\" THEN \"%\" ELSE \"%{{chapter}}%\" END) AND rating >= {{minRating}} AND rating <= {{maxRating}}",
             "order": "CASE {{random}} WHEN 0 THEN id WHEN 1 THEN RANDOM() END DESC"
         }
     ],
