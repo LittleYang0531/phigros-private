@@ -153,7 +153,9 @@ async function loadResource() {
   var total = Object.keys(loadList).length;
   for (var key in loadList) {
     var current = 0, currentTotal = 0;
-    document.getElementById("info-text").innerText = "(" + Math.floor(loaded / total * 100) + "%) Loading \"" + key + "\"(\"" + loadList[key] + "\")...";
+    document.getElementById("info-text").innerText = 
+      "(" + Math.floor(loaded / total * 100) + "%) Loading \"" + key + 
+      "\"(\"" + (loadList[key].length > 100 ? loadList[key].substr(50) + "..." + loadList[key].substr(loadList[key].size() - 50) : loadList[key]) + "\")...";
     var res = await fetch(loadList[key]);
     currentTotal = parseInt(res.headers.get('content-length'));
     var reader = res.body.getReader();
@@ -163,8 +165,9 @@ async function loadResource() {
       if (done) break;
       data.push(value);
       current += value.length;
-      document.getElementById("info-text").innerText = "(" + Math.floor(loaded / total * 100) + "%) Loading \"" + key + 
-        "\"(\"" + loadList[key] + "\", " + getSize(current) + "/" + getSize(currentTotal) + ")...";
+      document.getElementById("info-text").innerText = 
+        "(" + Math.floor(loaded / total * 100) + "%) Loading \"" + key + 
+        "\"(\"" + (loadList[key].length > 100 ? loadList[key].substr(50) + "..." + loadList[key].substr(loadList[key].size() - 50) : loadList[key]) + "\", " + getSize(current) + "/" + getSize(currentTotal) + ")...";
       document.getElementById("progress").style.width = (loaded / total * 100) + "%";
     }
     var blob = new Blob(data, { type: res.headers.get('content-type') });
