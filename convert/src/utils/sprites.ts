@@ -1,4 +1,3 @@
-import { transform } from "typescript"
 import { getImageInfo } from "./utils"
 
 export type SpriteLayout = {
@@ -8,7 +7,7 @@ export type SpriteLayout = {
 
 export async function tryCalculateLayout(sprite: SpriteLayout[]) {
     let size = 128
-    while (size <= 4096) {
+    while (size <= 65536) {
         try {
             return {
                 size,

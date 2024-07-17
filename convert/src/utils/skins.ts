@@ -1,9 +1,10 @@
 import JSZip from "jszip";
 import yaml, { load } from "js-yaml";
-import { cropImage, emptySrl, getImageInfo, packArrayBuffer, packRaw, randomString, trimImage } from "./utils";
+import { cropImage, emptySrl, getImageInfo, hash, packArrayBuffer, packRaw, reportStatus, solveImage } from "./utils";
 import { SkinData, SkinItem, SkinSpriteName } from "@sonolus/core"
 import { tryCalculateLayout } from "./sprites";
 import { gzip } from "pako";
+import { report } from "node:process";
 
 var thumbnailUrl = "favicon.jpg";
 var defaultSpritesList = [
@@ -36,16 +37,19 @@ var defaultSpritesList = [
 ];
 
 var customSpritesList = [
+    
 ];
 
 export async function packSkin(zip: JSZip, z: JSZip, loadList: Object) {
+    var tmp = JSON.parse(JSON.stringify(defaultSpritesList)), tmpurl = thumbnailUrl;
+    customSpritesList = [];
     for (var i = 0; i < defaultSpritesList.length; i++) defaultSpritesList[i].texture = loadList[defaultSpritesList[i].texture];
     thumbnailUrl = loadList[thumbnailUrl];
 
     var info: Object = yaml.load(await z.file("info.yml").async("string"));
 
     var skin: SkinItem = {
-        name: "phira-" + randomString(),
+        name: "phira-" + await hash(info["name"]),
         version: 4,
         title: info["name"],
         subtitle: info["author"],
@@ -59,6 +63,7 @@ export async function packSkin(zip: JSZip, z: JSZip, loadList: Object) {
     // 打包图标
 
     {
+        reportStatus("Packing SkinThumbnail...");
         const srl = await packRaw(thumbnailUrl);
         zip.file('sonolus/repository/' + srl.hash, srl.data, { binary: true });
         skin.thumbnail = { hash: srl.hash, url: '/sonolus/repository/' + srl.hash };
@@ -67,43 +72,49 @@ export async function packSkin(zip: JSZip, z: JSZip, loadList: Object) {
     // 打包图像
 
     { // 处理 click.png;
+        reportStatus("Processing click.png...");
         var img = "data:image/png;base64," + await z.file("click.png").async("base64");
-        img = await trimImage(img);
-        // document.getElementById("test-img").src = img;
+        img = await solveImage(img);
         customSpritesList.push({ name: SkinSpriteName.NoteHeadCyan, texture: img });
     }
 
     { // 处理 click_mh.png
+        reportStatus("Processing click_mh.png...");
         var img = "data:image/png;base64," + await z.file("click_mh.png").async("base64");
-        img = await trimImage(img);
+        img = await solveImage(img);
         customSpritesList.push({ name: SkinSpriteName.NoteTailCyan, texture: img });
     }
 
     { // 处理 drag.png
+        reportStatus("Processing drag.png...");
         var img = "data:image/png;base64," + await z.file("drag.png").async("base64");
-        img = await trimImage(img);
+        img = await solveImage(img);
         customSpritesList.push({ name: SkinSpriteName.NoteHeadYellow, texture: img });
     }
 
     { // 处理 drag_mh.png
+        reportStatus("Processing drag_mh.png...");
         var img = "data:image/png;base64," + await z.file("drag_mh.png").async("base64");
-        img = await trimImage(img);
+        img = await solveImage(img);
         customSpritesList.push({ name: SkinSpriteName.NoteTailYellow, texture: img });
     }
 
     { // 处理 flick.png
+        reportStatus("Processing flick.png...");
         var img = "data:image/png;base64," + await z.file("flick.png").async("base64");
-        img = await trimImage(img);
+        img = await solveImage(img);
         customSpritesList.push({ name: SkinSpriteName.NoteHeadRed, texture: img });
     }
 
     { // 处理 flick_mh.png
+        reportStatus("Processing flick_mh.png...");
         var img = "data:image/png;base64," + await z.file("flick_mh.png").async("base64");
-        img = await trimImage(img);
+        img = await solveImage(img);
         customSpritesList.push({ name: SkinSpriteName.NoteTailRed, texture: img });
     }
 
     { // 处理 hold.png
+        reportStatus("Processing hold.png...");
         var img = "data:image/png;base64," + await z.file("hold.png").async("base64");
         var obj = await getImageInfo(img);
         var headHeight = info["holdAtlas"][1];
@@ -114,6 +125,7 @@ export async function packSkin(zip: JSZip, z: JSZip, loadList: Object) {
     }
 
     { // 处理 hold_mh.png
+        reportStatus("Processing hold_mh.png...");
         var img = "data:image/png;base64," + await z.file("hold_mh.png").async("base64");
         var obj = await getImageInfo(img);
         var headHeight = info["holdAtlasMH"][1];
@@ -124,6 +136,7 @@ export async function packSkin(zip: JSZip, z: JSZip, loadList: Object) {
     }
 
     if (info.hasOwnProperty("colorPerfect")) { // 自定义的 All Perfect 判定线
+        reportStatus("Processing All Perfect judgeline.png...", false);
         var color = info["colorPerfect"];
         var canvas = document.createElement("canvas");
         var ctx = canvas.getContext("2d");
@@ -137,10 +150,12 @@ export async function packSkin(zip: JSZip, z: JSZip, loadList: Object) {
         ctx.fillStyle = "#" + color;
         ctx.fillRect(0, 0, 100, 100);
         var img = canvas.toDataURL();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         customSpritesList.push({ name: "Judgeline AllPerfect", texture: img });
     }
 
     if (info.hasOwnProperty("colorGood")) { // 自定义的 Full Combo 判定线
+        reportStatus("Processing Full Combo judgeline.png...", false);
         var color = info["colorGood"];
         var canvas = document.createElement("canvas");
         var ctx = canvas.getContext("2d");
@@ -154,6 +169,7 @@ export async function packSkin(zip: JSZip, z: JSZip, loadList: Object) {
         ctx.fillStyle = "#" + color;
         ctx.fillRect(0, 0, 100, 100);
         var img = canvas.toDataURL();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         customSpritesList.push({ name: "Judgeline FullCombo", texture: img });
     }
 
@@ -171,9 +187,11 @@ export async function packSkin(zip: JSZip, z: JSZip, loadList: Object) {
             }
         }
     }
+    reportStatus("Calculating sprites layout...");
     const { size, layouts } = await tryCalculateLayout(defaultSpritesList);
 
     // 绘制 SkinTexture
+    reportStatus("Packing SkinTexture...");
     var canvas = document.createElement("canvas");
     var ctx = canvas.getContext("2d");
     if (!ctx) throw "Failed to create canvas context";
@@ -188,11 +206,13 @@ export async function packSkin(zip: JSZip, z: JSZip, loadList: Object) {
         ctx.drawImage(image.img, layouts[i].x, layouts[i].y);
     }
     var texture = canvas.toDataURL();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     const srl = await packRaw(texture);
     zip.file('sonolus/repository/' + srl.hash, srl.data, { binary: true });
     skin.texture = { hash: srl.hash, url: '/sonolus/repository/' + srl.hash };
 
     // 打包 SkinData
+    reportStatus("Packing SkinData...");
     skinData.width = size;
     skinData.height = size;
     skinData.sprites = layouts;
@@ -200,6 +220,6 @@ export async function packSkin(zip: JSZip, z: JSZip, loadList: Object) {
     zip.file('sonolus/repository/' + data.hash, data.data, { binary: true });
     skin.data = { hash: data.hash, url: '/sonolus/repository/' + data.hash };
 
-    console.log(skin);
+    defaultSpritesList = JSON.parse(JSON.stringify(tmp)); thumbnailUrl = tmpurl;
     return skin;
 }

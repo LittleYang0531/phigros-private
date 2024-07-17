@@ -4,42 +4,9 @@ import yaml from 'js-yaml';
 import { packSkin } from './utils/skins';
 import JSZip from 'jszip';
 import { packEffect } from './utils/effects';
-
-// var loadList = {
-//   "favicon.jpg": "/src/assets/favicon.jpg",
-//   "JUDGMENT_LINE.png": "/src/assets/skins/JUDGMENT_LINE.png",
-//   "NOTE_CONNECTION_BLUE.png": "/src/assets/skins/NOTE_CONNECTION_BLUE.png",
-//   "NOTE_CONNECTION_YELLOW.png": "/src/assets/skins/NOTE_CONNECTION_YELLOW.png",
-//   "NOTE_HEAD_BLUE.png": "/src/assets/skins/NOTE_HEAD_BLUE.png",
-//   "NOTE_HEAD_CYAN.png": "/src/assets/skins/NOTE_HEAD_CYAN.png",
-//   "NOTE_HEAD_RED.png": "/src/assets/skins/NOTE_HEAD_RED.png",
-//   "NOTE_HEAD_YELLOW.png": "/src/assets/skins/NOTE_HEAD_YELLOW.png",
-//   "NOTE_TAIL_BLUE.png": "/src/assets/skins/NOTE_TAIL_BLUE.png",
-//   "NOTE_TAIL_CYAN.png": "/src/assets/skins/NOTE_TAIL_CYAN.png",
-//   "NOTE_TAIL_RED.png": "/src/assets/skins/NOTE_TAIL_RED.png",
-//   "NOTE_TAIL_YELLOW.png": "/src/assets/skins/NOTE_TAIL_YELLOW.png",
-//   "0.png": "/src/assets/skins/0.png",
-//   "1.png": "/src/assets/skins/1.png",
-//   "2.png": "/src/assets/skins/2.png",
-//   "3.png": "/src/assets/skins/3.png",
-//   "4.png": "/src/assets/skins/4.png",
-//   "5.png": "/src/assets/skins/5.png",
-//   "6.png": "/src/assets/skins/6.png",
-//   "7.png": "/src/assets/skins/7.png",
-//   "8.png": "/src/assets/skins/8.png",
-//   "9.png": "/src/assets/skins/9.png",
-//   "Blocker.png": "/src/assets/skins/Blocker.png",
-//   "combo.png": "/src/assets/skins/combo.png",
-//   "Judgeline AllPerfect.png": "/src/assets/skins/Judgeline AllPerfect.png",
-//   "Judgeline FullCombo.png": "/src/assets/skins/Judgeline FullCombo.png",
-//   "Pause.png": "/src/assets/skins/Pause.png",
-//   "PERFECT.mp3": "/src/assets/effects/PERFECT.mp3",
-//   "PERFECT_ALTERNATIVE.mp3": "/src/assets/effects/PERFECT_ALTERNATIVE.mp3",
-//   "HOLD.mp3": "/src/assets/effects/HOLD.mp3",
-//   "Phigros Tick.mp3": "/src/assets/effects/Phigros Tick.mp3",
-//   "ffmpeg-core.js": "/ffmpeg-core.js",
-//   "ffmpeg-core.wasm": "/ffmpeg-core.wasm",
-// };
+import { packParticle } from './utils/particles';
+import test from 'node:test';
+import { clearStatus, count, getImageInfo, reportStatus, trimImage } from './utils/utils';
 
 var loadList = {
   "favicon.jpg": new URL("/src/assets/favicon.jpg", import.meta.url).href,
@@ -75,6 +42,7 @@ var loadList = {
   "Phigros Tick.mp3": new URL("/src/assets/effects/Phigros Tick.mp3", import.meta.url).href,
   "ffmpeg-core.js": new URL("/ffmpeg-core.js", import.meta.url).href,
   "ffmpeg-core.wasm": new URL("/ffmpeg-core.wasm", import.meta.url).href,
+  "block.png": new URL("/src/assets/block.png", import.meta.url).href,
 };
 
 var isLoading = true;
@@ -100,6 +68,7 @@ function handleClick(e) {
   input.click();
 }
 async function convertFile(file) {
+  clearStatus();
   document.getElementById("text").innerText = "Converting...";
   zip.loadAsync(file).then(async (zip) => {
     var newzip: JSZip = new JSZip();
@@ -119,9 +88,11 @@ async function convertFile(file) {
     
     items.skins.push(await packSkin(newzip, zip, loadList));
     items.effects.push(await packEffect(newzip, zip, loadList));
+    items.particles.push(await packParticle(newzip, zip, loadList));
 
     for (var key in items) {
       for (var i = 0; i < items[key].length; i++) {
+        reportStatus("Saving " + key + " " + items[key][i].name + "...");
         newzip.file("sonolus/" + key + "/" + items[key][i].name, JSON.stringify({
           item: items[key][i],
           description: obj["description"] == undefined ? "" : obj["description"],
@@ -130,18 +101,21 @@ async function convertFile(file) {
           sections: []
         }));
       }
+      reportStatus("Saving " + key + " info...");
       newzip.file("sonolus/" + key + "/info", JSON.stringify({
         sections: [{
           title: "#NEWEST",
           items: items[key]
         }]
       }));
+      reportStatus("Saving " + key + " list...");
       newzip.file("sonolus/" + key + "/list", JSON.stringify({
         pageCount: 1,
         items: items[key]
       }));
     }
 
+    reportStatus("Saving package info...");
     newzip.file("sonolus/package", JSON.stringify({
       shouldUpdate: false
     }));
@@ -162,9 +136,10 @@ async function convertFile(file) {
       a.href = url;
       a.download = obj["name"] + ".scp";
       a.click();
+      reportStatus("Done!");
       document.getElementById("text").innerText = "Downloading...";
     });
-  }).catch((e) => alert("Failed to load Phira respack file: " + e));
+  }).catch((e) => { alert("Failed to load Phira respack file: " + e); console.log(e); });
 }
 
 function getSize(size: number): string {
@@ -175,24 +150,18 @@ function getSize(size: number): string {
 
 async function loadResource() {
   var loaded = 0;
-  var total = 0;
-  var filesize = {};
+  var total = Object.keys(loadList).length;
   for (var key in loadList) {
-    var fileSize = await fetch(loadList[key], { method: 'HEAD' }).then((res) => res.headers.get('content-length'));
-    filesize[key] = fileSize;
-    total += parseInt(fileSize);
-  }
-  for (var key in loadList) {
-    var current = 0, currentTotal = filesize[key];
+    var current = 0, currentTotal = 0;
     document.getElementById("info-text").innerText = "(" + Math.floor(loaded / total * 100) + "%) Loading \"" + key + "\"(\"" + loadList[key] + "\")...";
     var res = await fetch(loadList[key]);
+    currentTotal = parseInt(res.headers.get('content-length'));
     var reader = res.body.getReader();
     var data = [];
     while(true) {
       var { done, value } = await reader.read();
       if (done) break;
       data.push(value);
-      loaded += value.length;
       current += value.length;
       document.getElementById("info-text").innerText = "(" + Math.floor(loaded / total * 100) + "%) Loading \"" + key + 
         "\"(\"" + loadList[key] + "\", " + getSize(current) + "/" + getSize(currentTotal) + ")...";
@@ -201,10 +170,39 @@ async function loadResource() {
     var blob = new Blob(data, { type: res.headers.get('content-type') });
     var url = URL.createObjectURL(blob);
     loadList[key] = url;
+    loaded++;
+    document.getElementById("progress").style.width = (loaded / total * 100) + "%";
   }
   isLoading = false;
   document.getElementById("dropzone").style.cursor = "pointer";
   document.getElementById("info-text").innerText = "(100%) Loading resource finished!";
+}
+
+function test222() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = ".png,.jpg"
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    var canvas = document.createElement('canvas');
+    var ctx = canvas.getContext('2d');
+    var newimg = await trimImage(URL.createObjectURL(file), 0);
+    const newimgInfo = await getImageInfo(newimg);
+    const imgInfo = await getImageInfo(URL.createObjectURL(file));
+    canvas.width = newimgInfo.width * 2;
+    canvas.height = canvas.width;
+    ctx.drawImage(imgInfo.img, 0, 0, imgInfo.width, imgInfo.height, (canvas.width - imgInfo.width) / 2, (canvas.height - imgInfo.height) / 2, imgInfo.width, imgInfo.height);
+    if (canvas.width > 1000) {
+      var currentImg = canvas.toDataURL();
+      var scale = 1000 / canvas.width;
+      canvas.width *= scale;
+      canvas.height *= scale;
+      const imgInfo = await getImageInfo(currentImg);
+      ctx.drawImage(imgInfo.img, 0, 0, imgInfo.width, imgInfo.height, 0, 0, canvas.width, canvas.height);
+      document.getElementById("test-img").src = canvas.toDataURL();
+    }
+  };
+  input.click();
 }
 
 window.onload = loadResource;
@@ -229,6 +227,7 @@ window.onload = loadResource;
     <p>1. This tool is designed for <strong style="color: red">Sonolus v0.8.3 beta</strong></p>
     <p>2. The copyright of all resource packages belongs to <strong>the original author</strong>. Please <strong>follow the requirements</strong> set by the original author when using them. If infringement or other issues arise due to disfollowing the original author's requirements, this website and its developer shall not be held responsible, and the user shall bear all responsibility on their own!</p>
     <p>3. If you have any issues when using this tool, welcome to report them to <a href="https://github.com/LittleYang0531/phigros-private/issues">https://github.com/LittleYang0531/phigros-private/issues</a>. I will solve them as quickly as I can.</p>
+    <!-- <button @click="test222">nmsl</button> -->
   </div>
   <img id="test-img" />
 </template>

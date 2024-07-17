@@ -1,6 +1,6 @@
 import CryptoJS from 'crypto-js'
 
-async function hash(data: ArrayBuffer) {
+export async function hash(data: ArrayBuffer) {
     const buffer = await CryptoJS.lib.WordArray.create(data)
     return CryptoJS.SHA1(buffer).toString()
 }
@@ -72,7 +72,9 @@ export async function cropImage(src: string, x: number, y: number, w: number, h:
     canvas.height = sh
     ctx.drawImage(img, sx, sy, sw, sh, 0, 0, sw, sh)
 
-    return canvas.toDataURL()
+    var res = canvas.toDataURL();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    return res;
 }
 
 export async function trimImage(src: string, limit: number = 0) {
@@ -89,6 +91,7 @@ export async function trimImage(src: string, limit: number = 0) {
     ctx.drawImage(img, sx, sy, sw, sh, 0, 0, sw, sh)
     data = ctx.getImageData(0, 0, sw, sh)
     var buffer = data.data
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     for (var i = 0; i < buffer.length; i += 4) {
         var a = buffer[i + 3]
@@ -108,43 +111,48 @@ export async function trimImage(src: string, limit: number = 0) {
 
     canvas.width = cw
     canvas.height = ch
-    console.log(left, right, top, bottom)
     ctx.drawImage(img, sx + left, sy + top, cw, ch, 0, 0, cw, ch)
 
-    return canvas.toDataURL()
+    var res = canvas.toDataURL();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    return res;
 }
 
-export async function solveHLImage(src: string) {
-    var src0 = await trimImage(src, 254)
-    var src0info = await getImageInfo(src0)
-
-    const { img, width, height } = await getImageInfo(src)
-
-    var canvas = document.createElement("canvas")
-    var ctx = canvas.getContext("2d")
-    if (!ctx) throw "Failed to create canvas context"
-
-    canvas.width = width
-    canvas.height = height
-    ctx.drawImage(img, 0, 0)
-    var buffer = ctx.getImageData(0, 0, width, height).data
-
-    var maxA = 0, minA = 255
-    for (var i = 0; i < buffer.length; i += 4) {
-        var a = buffer[i + 3]
-        if (a == 0) continue;
-        if (a < 255) maxA = Math.max(maxA, a), minA = Math.min(minA, a)
+export async function solveImage(src: string) {
+    var canvas = document.createElement('canvas');
+    var ctx = canvas.getContext('2d');
+    var newimg = await trimImage(src, 0);
+    const newimgInfo = await getImageInfo(newimg);
+    const imgInfo = await getImageInfo(src);
+    canvas.width = newimgInfo.width * 2;
+    canvas.height = canvas.width;
+    ctx.drawImage(imgInfo.img, 0, 0, imgInfo.width, imgInfo.height, (canvas.width - imgInfo.width) / 2, (canvas.height - imgInfo.height) / 2, imgInfo.width, imgInfo.height);
+    if (canvas.width > 1000) {
+      var currentImg = canvas.toDataURL();
+      var scale = 1000 / canvas.width;
+      canvas.width *= scale;
+      canvas.height *= scale;
+      const imgInfo = await getImageInfo(currentImg);
+      ctx.drawImage(imgInfo.img, 0, 0, imgInfo.width, imgInfo.height, 0, 0, canvas.width, canvas.height);
+      var res = canvas.toDataURL();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      return res;
     }
-    var realWidth = Math.floor(src0info.width * 1089.0 / 989.0);
-    for (var i = 0; i < buffer.length; i += 4) {
-        var x = (i / 4) % width
-        var y = Math.floor((i / 4) / width)
-        var a = buffer[i + 3]
-        if (a == 255) continue;
-    }
+    var res = canvas.toDataURL();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    return res;
+}
 
-    ctx.putImageData(new ImageData(new Uint8ClampedArray(buffer), src0info.width, src0info.height), 0, 0)
-    document.getElementById("test-img").src = src0;
+export var count = 0;
+const total = 26;
+export async function clearStatus() {
+    count = 0;
+    document.getElementById("info-text").innerText = "Preparing...";
+}
+export async function reportStatus(text: string, addCount: boolean = true) {
+    if (addCount) count++;
+    document.getElementById("info-text").innerText = text;
+    document.getElementById("progress").style.width = Math.min(100, count / total * 100) + "%";
 }
 
 // export async function resizeImage(src: string, ratio: number) {
