@@ -131,7 +131,7 @@ export async function packParticle(zip: JSZip, z: JSZip, loadList: Object) {
                             y: { from: { c: 0 }, to: { c: 0 }, ease: "linear" },
                             w: { from: { c: 1 }, to: { c: 1 }, ease: "linear" },
                             h: { from: { c: 1 }, to: { c: 1 }, ease: "linear" },
-                            r: { from: { c: 1 }, to: { c: 1 }, ease: "linear" },
+                            r: { from: { c: 0 }, to: { c: 0 }, ease: "linear" },
                             a: { from: { c: 1 }, to: { c: 1 }, ease: "linear" },
                         };
                     })
@@ -173,7 +173,7 @@ export async function packParticle(zip: JSZip, z: JSZip, loadList: Object) {
                             y: { from: { c: 0 }, to: { c: 0 }, ease: "linear" },
                             w: { from: { c: 1 }, to: { c: 1 }, ease: "linear" },
                             h: { from: { c: 1 }, to: { c: 1 }, ease: "linear" },
-                            r: { from: { c: 1 }, to: { c: 1 }, ease: "linear" },
+                            r: { from: { c: 0 }, to: { c: 0 }, ease: "linear" },
                             a: { from: { c: 1 }, to: { c: 1 }, ease: "linear" },
                         };
                     })
