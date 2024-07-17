@@ -6,19 +6,22 @@ import { gzip } from "pako";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile, toBlobURL } from "@ffmpeg/util";
 
-const thumbnailUrl = "/src/assets/favicon.jpg";
+var thumbnailUrl = "favicon.jpg";
 var defaultClipsList = [
-    { name: EffectClipName.Perfect, clip: "/src/assets/effects/PERFECT.mp3" },
-    { name: EffectClipName.PerfectAlternative, clip: "/src/assets/effects/PERFECT_ALTERNATIVE.mp3" },
-    { name: EffectClipName.Hold, clip: "/src/assets/effects/HOLD.mp3" },
-    { name: "Phigros Tick", clip: "/src/assets/effects/Phigros Tick.mp3" }
+    { name: EffectClipName.Perfect, clip: "PERFECT.mp3" },
+    { name: EffectClipName.PerfectAlternative, clip: "PERFECT_ALTERNATIVE.mp3" },
+    { name: EffectClipName.Hold, clip: "HOLD.mp3" },
+    { name: "Phigros Tick", clip: "Phigros Tick.mp3" }
 ];
 
 var customClipsList = [
 
 ];
 
-export async function packEffect(zip: JSZip, z: JSZip) {
+export async function packEffect(zip: JSZip, z: JSZip, loadList: Object) {
+    for (var i = 0; i < defaultClipsList.length; i++) defaultClipsList[i].clip = loadList[defaultClipsList[i].clip];
+    thumbnailUrl = loadList[thumbnailUrl];
+
     var info: Object = yaml.load(await z.file("info.yml").async("string"));
 
     var effect: EffectItem = {
@@ -69,13 +72,14 @@ export async function packEffect(zip: JSZip, z: JSZip) {
     var effectAudio: JSZip = new JSZip();
     var ffmpeg = new FFmpeg();
     await ffmpeg.load({
-        coreURL: await toBlobURL(`/ffmpeg-core.js`, 'text/javascript'),
-        wasmURL: await toBlobURL(`/ffmpeg-core.wasm`, 'application/wasm')
+        coreURL: loadList["ffmpeg-core.js"],
+        wasmURL: loadList["ffmpeg-core.wasm"]
     });
     for (var i = 0; i < defaultClipsList.length; i++) {
         await ffmpeg.writeFile("input.ogg", await fetchFile(defaultClipsList[i].clip));
         await ffmpeg.exec([ '-i', 'input.ogg', 'output.mp3' ]);
         var output = await ffmpeg.readFile("output.mp3");
+        // var output = await fetchFile(defaultClipsList[i].clip);
         effectAudio.file(i.toString(10), output, { binary: true });
     }
 
@@ -85,7 +89,7 @@ export async function packEffect(zip: JSZip, z: JSZip) {
     effect.data = { hash: d.hash, url: '/sonolus/repository/' + d.hash };
 
     // 打包 EffectAudio
-    const a = await packArrayBuffer(gzip(await effectAudio.generateAsync({ type: "arraybuffer" }), { level: 9 }));
+    const a = await packRaw(URL.createObjectURL(await effectAudio.generateAsync({ type: "blob" })));
     zip.file('sonolus/repository/' + a.hash, a.data, { binary: true });
     effect.audio = { hash: a.hash, url: '/sonolus/repository/' + a.hash };
 

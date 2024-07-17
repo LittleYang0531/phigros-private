@@ -1,5 +1,7 @@
 {
   "routes": [
-    { "src": "/(.*)", "dest": "/api" }
+    { "src": "/convert/(.*)", "dest": "/convert/dist/$1" },
+    { "src": "/convert", "dest": "/convert/dist/index.html" },
+    { "src": "/(.*)", "dest": "/api/index" }
   ]
 }

@@ -9,7 +9,6 @@ lerna-debug.log*
 
 node_modules
 .DS_Store
-dist
 dist-ssr
 coverage
 *.local
@@ -20,7 +19,7 @@ package-lock.json
 
 # Editor directories and files
 .vscode/*
-!.vscode/extensions.json
+.vscode/extensions.json
 .idea
 *.suo
 *.ntvs*
@@ -31,3 +30,7 @@ package-lock.json
 src/i18n/generated-*
 .vercel
 package
+
+convert/.vscode
+convert/node_modules
+convert/public/ffmpeg-core*

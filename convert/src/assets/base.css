@@ -83,6 +83,10 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-user-select:none;/*webkit浏览器*/
+  -moz-user-select:none;/*火狐*/
+  -ms-user-select:none;/*IE10*/
+  user-select:none;
 }
 
 strong {
