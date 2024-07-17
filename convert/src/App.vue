@@ -178,6 +178,7 @@ async function loadResource() {
   }
   isLoading = false;
   document.getElementById("dropzone").style.cursor = "pointer";
+  document.getElementById("dropzone").style.backgroundColor = "";
   document.getElementById("info-text").innerText = "(100%) Loading resource finished!";
 }
 
@@ -216,14 +217,14 @@ window.onload = loadResource;
     <h1 style="margin: 20px">
       Phira Respack -> Sonolus Collection Package
     </h1>
-    <div id="dropzone" @drop="handleDrop" @dragover="handleDragOver" @click="handleClick" style="border: dashed 1px grey; height: 300px; border-radius: 5px; display: flex; display: -webkit-flex; justify-content: center; align-items: center; cursor: not-allowed; flex-direction: column; justify-content: center;">
+    <div id="dropzone" @drop="handleDrop" @dragover="handleDragOver" @click="handleClick" style="transition: background-color 0.5s; border: dashed 1px grey; height: 300px; border-radius: 5px; display: flex; display: -webkit-flex; justify-content: center; align-items: center; cursor: not-allowed; flex-direction: column; justify-content: center; background-color: #ffffff2f;">
       <h2 style="width: fit-content">Drag a file here or choose your file</h2>
       <p id="text"></p>
     </div>
     <br/>
     <div>
       <p id="info-text">(0%) Loading resources...</p>
-      <div id="progress" style="width: 100%; border-radius: 50px; height: 5px; background-color: grey"></div>
+      <div id="progress" style="transition: width 0.2s; width: 100%; border-radius: 50px; height: 5px; background-color: grey"></div>
     </div>
     <br/>
     <strong>Hint: </strong>
