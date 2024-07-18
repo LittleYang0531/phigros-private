@@ -121,7 +121,7 @@ export async function trimImage(src: string, limit: number = 0) {
 export async function solveImage(src: string) {
     var canvas = document.createElement('canvas');
     var ctx = canvas.getContext('2d');
-    var newimg = await trimImage(src, 0);
+    var newimg = await trimImage(src, 30);
     const newimgInfo = await getImageInfo(newimg);
     const imgInfo = await getImageInfo(src);
     canvas.width = newimgInfo.width * 2;
