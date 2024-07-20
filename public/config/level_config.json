@@ -112,8 +112,8 @@
                     "query": "minRating",
                     "name": "#RATING_MINIMUM",
                     "type": "slider",
-                    "def": 1,
-                    "min": 1,
+                    "def": 0,
+                    "min": 0,
                     "max": 16,
                     "step": 1
                 },
@@ -122,7 +122,7 @@
                     "name": "#RATING_MAXIMUM",
                     "type": "slider",
                     "def": 16,
-                    "min": 1,
+                    "min": 0,
                     "max": 16,
                     "step": 1
                 },
