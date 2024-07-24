@@ -40,8 +40,8 @@ var loadList = {
   "PERFECT_ALTERNATIVE.mp3": new URL("/src/assets/effects/PERFECT_ALTERNATIVE.mp3", import.meta.url).href,
   "HOLD.mp3": new URL("/src/assets/effects/HOLD.mp3", import.meta.url).href,
   "Phigros Tick.mp3": new URL("/src/assets/effects/Phigros Tick.mp3", import.meta.url).href,
-  "ffmpeg-core.js": new URL("/ffmpeg-core.js", import.meta.url).href,
-  "ffmpeg-core.wasm": new URL("/ffmpeg-core.wasm", import.meta.url).href,
+  "ffmpeg-core.js": "https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js",
+  "ffmpeg-core.wasm": "https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.wasm",
   "block.png": new URL("/src/assets/block.png", import.meta.url).href,
 };
 
