@@ -15,13 +15,17 @@
             "title": "#NEWEST",
             "icon": "level",
             "filter": "",
-            "order": "id DESC"
+            "order": "id DESC",
+            "itemType": "level",
+            "searchValues": "type=quick"
         },
         {
             "title": "#RANDOM",
             "icon": "level",
             "filter": "name LIKE \"%easy%\"",
-            "order": "RANDOM() ASC"
+            "order": "RANDOM() ASC",
+            "itemType": "level",
+            "searchValues": "type=advanced&random=1"
         }
     ],
     "levels.details.sections": [
@@ -29,19 +33,33 @@
             "title": "#RECOMMENDED",
             "icon": "star",
             "filter": "title = \"{{title}}\"",
-            "order": "id DESC"
+            "order": "id DESC",
+            "itemType": "level",
+            "searchValues": "type=advanced&title={{title}}"
         },
         {
             "title": "#SAME_ARTISTS",
             "icon": "crown",
             "filter": "name LIKE \"%easy%\" AND artists = \"{{artists}}\"",
-            "order": "id DESC"
+            "order": "id DESC",
+            "itemType": "level",
+            "searchValues": "type=advanced&artist={{artists}}&difficulty=10000"
         },
         {
             "title": "#SAME_AUTHOR",
             "icon": "crown",
             "filter": "author = \"{{author}}\"",
-            "order": "id DESC"
+            "order": "id DESC",
+            "itemType": "level",
+            "searchValues": "type=advanced&author={{author}}&difficulty=10000"
+        },
+        {
+            "title": "#BACKGROUND",
+            "icon": "background",
+            "filter": "title = \"{{title}}\"",
+            "order": "id DESC",
+            "itemType": "background",
+            "searchValues": "type=quick&keywords={{title}}"
         }
     ],
     "levels.searches": [    
