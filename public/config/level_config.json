@@ -69,19 +69,37 @@
                     "placeholder": "#AUTHOR_PLACEHOLDER"
                 },
                 {
-                    "name": "#DIFFICULTY",
                     "query": "difficulty",
-                    "type": "select",
-                    "def": 0,
-                    "values": [ "All", "EZ", "HD", "IN", "AT", "SP" ]
+                    "name": "#DIFFICULTY",
+                    "type": "multi",
+                    "def": [ 1, 1, 1, 1, 1 ],
+                    "values": [ "EZ", "HD", "IN", "AT", "SP" ],
+                    "variables": [
+                        {
+                            "name": "difficulty_or",
+                            "expr": "name LIKE \"%{{difficulty}}%\"",
+                            "connector": "OR",
+                            "default": "0"
+                        }, {
+                            "name": "difficulty_and",
+                            "expr": "name LIKE \"%{{difficulty}}%\"",
+                            "connector": "AND",
+                            "default": "1"
+                        }
+                    ]
                 },
                 {
                     "name": "Chapter",
                     "query": "chapter",
-                    "type": "select",
-                    "def": 0,
-                    "values": [ 
-                        "All", 
+                    "type": "multi",
+                    "def": [
+                        1, 1, 1, 1, 1,
+                        1, 1, 1, 1, 1,
+                        1, 1, 1, 1, 1,
+                        1, 1, 1, 1, 1,
+                        1, 1, 1, 1, 1
+                    ],
+                    "values": [
                         "Single", 
                         "Legacy", 
                         "Chapter 5", 
@@ -91,6 +109,7 @@
                         "Side story 1",
                         "Side story 2",
                         "Side story 3",
+                        "TAKUMI³",
                         "SHINOBI SLASH",
                         "Paradigm: Reboot",
                         "CHUNITHM",
@@ -106,6 +125,19 @@
                         "GOOD",
                         "HyuN",
                         "Rising Sun Traxx"
+                    ],
+                    "variables": [
+                        {
+                            "name": "chapter_or",
+                            "expr": "tags LIKE \"%({{chapter}},)%\"",
+                            "connector": "OR",
+                            "default": "0"
+                        }, {
+                            "name": "chapter_and",
+                            "expr": "tags LIKE \"%({{chapter}},)%\"",
+                            "connector": "AND",
+                            "default": "1"
+                        }
                     ]
                 },
                 {
@@ -133,7 +165,7 @@
                     "def": 0
                 }
             ],
-            "filter": "(name LIKE \"%{{keywords}}%\" OR title LIKE \"%{{keywords}}%\" OR artists LIKE \"{{keywords}}\" OR author LIKE \"{{keywords}}\") AND artists LIKE \"%{{artist}}%\" AND author LIKE \"%{{author}}%\" AND tags LIKE (CASE \"{{difficulty}}\" WHEN \"All\" THEN \"%\" ELSE \"(%{{difficulty}}%,)\" END) AND tags LIKE (CASE \"{{chapter}}\" WHEN \"All\" THEN \"%\" ELSE \"(%{{chapter}}%,)\" END) AND rating >= {{minRating}} AND rating <= {{maxRating}}",
+            "filter": "(name LIKE \"%{{keywords}}%\" OR title LIKE \"%{{keywords}}%\" OR artists LIKE \"{{keywords}}\" OR author LIKE \"{{keywords}}\") AND artists LIKE \"%{{artist}}%\" AND author LIKE \"%{{author}}%\" AND tags {{difficulty_or}} AND {{chapter_or}} AND rating >= {{minRating}} AND rating <= {{maxRating}}",
             "order": "CASE {{random}} WHEN 0 THEN id WHEN 1 THEN RANDOM() END DESC"
         }
     ],

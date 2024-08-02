@@ -10,12 +10,18 @@
         { "type": "background" },
         { "type": "effect" },
         { "type": "particle" },
-        { "type": "engine" }
+        { "type": "engine" },
+        { "type": "configuration" }
     ],
     "server.logo": "c3e27937fb9578065038d7988c6d4f955b584d95",
-    "server.banner": "b4b42df0b336e852d14b4d334c3d99f8992626d8",
+    "server.banner": [
+        { "name": "Phigros Banner", "hash": "b4b42df0b336e852d14b4d334c3d99f8992626d8" }
+    ],
     "server.rootUrl": "phigros.server.littleyang.icu",
-    "server.data.prefix": "https://cdn.jsdelivr.net/gh/LittleYang0531/phigros-private-data/",
+    "server.data.prefix": [
+        { "name": "cdn.jsdelivr.net(For global users)", "url": "https://cdn.jsdelivr.net/gh/LittleYang0531/phigros-private-data/" },
+        { "name": "cdn.jsdmirror.com(中国大陆用户使用)", "url": "https://cdn.jsdmirror.com/gh/LittleYang0531/phigros-private-data/" }
+    ],
     "server.multiplayer.address": "ws://192.168.2.18:8080",
     "language.default": "zhs"
 }

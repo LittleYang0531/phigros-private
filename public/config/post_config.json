@@ -1,7 +1,7 @@
 {
-    "posts.enableLike": false,
-    "posts.enableComment": false,
-    "posts.enableRating": false,
+    "posts.enableLike": true,
+    "posts.enableComment": true,
+    "posts.enableRating": true,
     "posts.enableGUICreate": false,
     "posts.enableSonolusCreate": false,
     "posts.exceptGUICreate": [],
@@ -12,10 +12,12 @@
     "posts.pageSize.community": 5,
     "posts.info.sections": [
         {
-            "title": "#ANNOUNCEMENT",
+            "title": "#NEWEST",
             "icon": "post",
-            "filter": "tags LIKE \"%#ANNOUNCEMENT%\"",
-            "order": "time DESC"
+            "filter": "",
+            "itemType": "post",
+            "order": "id DESC",
+            "searchValues": "type=quick"
         }
     ],
     "posts.details.sections": [
