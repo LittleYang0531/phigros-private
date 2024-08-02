@@ -1,7 +1,7 @@
 {
-    "posts.enableLike": true,
-    "posts.enableComment": true,
-    "posts.enableRating": true,
+    "posts.enableLike": false,
+    "posts.enableComment": false,
+    "posts.enableRating": false,
     "posts.enableGUICreate": false,
     "posts.enableSonolusCreate": false,
     "posts.exceptGUICreate": [],
