@@ -165,7 +165,7 @@
                     "def": 0
                 }
             ],
-            "filter": "(name LIKE \"%{{keywords}}%\" OR title LIKE \"%{{keywords}}%\" OR artists LIKE \"{{keywords}}\" OR author LIKE \"{{keywords}}\") AND artists LIKE \"%{{artist}}%\" AND author LIKE \"%{{author}}%\" AND tags {{difficulty_or}} AND {{chapter_or}} AND rating >= {{minRating}} AND rating <= {{maxRating}}",
+            "filter": "(name LIKE \"%{{keywords}}%\" OR title LIKE \"%{{keywords}}%\" OR artists LIKE \"{{keywords}}\" OR author LIKE \"{{keywords}}\") AND artists LIKE \"%{{artist}}%\" AND author LIKE \"%{{author}}%\" AND {{difficulty_or}} AND {{chapter_or}} AND rating >= {{minRating}} AND rating <= {{maxRating}}",
             "order": "CASE {{random}} WHEN 0 THEN id WHEN 1 THEN RANDOM() END DESC"
         }
     ],
